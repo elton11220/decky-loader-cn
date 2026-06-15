@@ -2,29 +2,34 @@
 
 [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 
+# Use environment-provided proxy if set, otherwise fallback to built-in
+if [ -z "${GITHUB_PROXY}" ]; then
+    GITHUB_PROXY="https://cdn.gh-proxy.org/"
+fi
+
 # check if JQ is installed
 if ! command -v jq &> /dev/null
 then
-    echo "JQ could not be found, please install it"
-    echo "Info on how to install it can be found at https://stedolan.github.io/jq/download/"
+    echo "JQ 未找到，请安装它"
+    echo "安装信息可在 https://stedolan.github.io/jq/download/ 找到"
     exit 1
 fi
 
-# check if github.com is reachable
-if ! curl -Is https://github.com | head -1 | grep 200 > /dev/null
+# check if cdn.gh-proxy.org is reachable
+if ! curl -Is ${GITHUB_PROXY%/} | head -1 | grep 200 > /dev/null
 then
-    echo "Github appears to be unreachable, you may not be connected to the internet"
+    echo "gh-proxy 代理无法访问，您可能未连接到互联网"
     exit 1
 fi
 
 # check if api.github.com is working(not rate-limited)
 if ! curl -Is https://api.github.com/repos/SteamDeckHomebrew/decky-loader/releases | head -1 | grep 200 > /dev/null
 then
-    echo "Your network have problems accessing Github Api(probably rate-limited), please wait for a while and try again."
+    echo "网络无法访问 Github API（可能被限流），请稍候再试"
     exit 1
 fi
 
-echo "Installing Steam Deck Plugin Loader release..."
+echo "正在安装 Steam Deck Plugin Loader 发布版本..."
 
 USER_DIR="$(getent passwd $SUDO_USER | cut -d: -f6)"
 HOMEBREW_FOLDER="${USER_DIR}/homebrew"
@@ -43,10 +48,10 @@ VERSION=$(jq -r '.tag_name' <<< ${RELEASE} )
 DOWNLOADURL=$(jq -r '.assets[].browser_download_url | select(endswith("PluginLoader"))' <<< ${RELEASE})
 
 printf "Installing version %s...\n" "${VERSION}"
-curl -L $DOWNLOADURL --output ${HOMEBREW_FOLDER}/services/PluginLoader
+curl -L "${GITHUB_PROXY}${DOWNLOADURL}" --output ${HOMEBREW_FOLDER}/services/PluginLoader
 chmod +x ${HOMEBREW_FOLDER}/services/PluginLoader
 
-echo "Check for SELinux presence and if it is present, set the correct permission on the binary file..."
+echo "检查 SELinux 存在并设置正确的二进制文件权限..."
 hash getenforce 2>/dev/null && getenforce | grep "Enforcing" >/dev/null && chcon -t bin_t ${HOMEBREW_FOLDER}/services/PluginLoader
 
 echo $VERSION > ${HOMEBREW_FOLDER}/services/.loader.version
@@ -57,7 +62,7 @@ systemctl --user disable plugin_loader 2> /dev/null
 systemctl stop plugin_loader 2> /dev/null
 systemctl disable plugin_loader 2> /dev/null
 
-curl -L https://raw.githubusercontent.com/SteamDeckHomebrew/decky-loader/main/dist/plugin_loader-release.service  --output ${HOMEBREW_FOLDER}/services/plugin_loader-release.service
+curl -L ${GITHUB_PROXY}https://raw.githubusercontent.com/SteamDeckHomebrew/decky-loader/main/dist/plugin_loader-release.service  --output ${HOMEBREW_FOLDER}/services/plugin_loader-release.service
 
 cat > "${HOMEBREW_FOLDER}/services/plugin_loader-backup.service" <<- EOM
 [Unit]
@@ -77,11 +82,11 @@ WantedBy=multi-user.target
 EOM
 
 if [[ -f "${HOMEBREW_FOLDER}/services/plugin_loader-release.service" ]]; then
-    printf "Grabbed latest release service.\n"
+    printf "已获取最新发布版本服务。\n"
     sed -i -e "s|\${HOMEBREW_FOLDER}|${HOMEBREW_FOLDER}|" "${HOMEBREW_FOLDER}/services/plugin_loader-release.service"
     cp -f "${HOMEBREW_FOLDER}/services/plugin_loader-release.service" "/etc/systemd/system/plugin_loader.service"
 else
-    printf "Could not curl latest release systemd service, using built-in service as a backup!\n"
+    printf "无法获取最新发布版本 systemd 服务，使用内置服务作为备份！\n"
     rm -f "/etc/systemd/system/plugin_loader.service"
     cp "${HOMEBREW_FOLDER}/services/plugin_loader-backup.service" "/etc/systemd/system/plugin_loader.service"
 fi

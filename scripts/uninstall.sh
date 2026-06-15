@@ -2,6 +2,11 @@
 
 [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 
+# Use environment-provided proxy if set, otherwise fallback to built-in
+if [ -z "${GITHUB_PROXY}" ]; then
+	GITHUB_PROXY="https://cdn.gh-proxy.org/"
+fi
+
 echo "Uninstalling Steam Deck Plugin Loader..."
 
 USER_DIR="$(getent passwd $SUDO_USER | cut -d: -f6)"
