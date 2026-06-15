@@ -18,6 +18,11 @@ case "$cdn_choice" in
 *) echo "无效选择，使用默认 https://cdn.gh-proxy.org/"; SELECTED_PROXY="https://cdn.gh-proxy.org/" ;;
 esac
 
+echo "请输入字母执行对应的操作："
+echo "s) 安装 decky-loader 稳定版"
+echo "p) 安装 decky-loader 预发布版"
+echo "u) 卸载 decky-loader"
+echo "b) 修复 bazzite 系统安装后不展示扳手图标"
 # Keep asking which release to install
 while true
 do
@@ -26,18 +31,23 @@ do
 
     case $(echo "${action}" | tr '[:lower:]' '[:upper:]') in
     S*)
-        echo "安装稳定版"
+        echo "安装 decky-loader 稳定版"
         curl -L "${SELECTED_PROXY}https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install_release.sh" | GITHUB_PROXY="${SELECTED_PROXY}" sh -s --
         exit 0
         ;;
     P*)
-        echo "安装预发布版"
+        echo "安装 decky-loader 预发布版"
         curl -L "${SELECTED_PROXY}https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install_prerelease.sh" | GITHUB_PROXY="${SELECTED_PROXY}" sh -s --
         exit 0
         ;;
     U*)
         echo "卸载 decky-loader"
         curl -L "${SELECTED_PROXY}https://github.com/elton11220/decky-loader-cn/blob/main/scripts/uninstall.sh" | GITHUB_PROXY="${SELECTED_PROXY}" sh -s --
+        exit 0
+        ;;
+    B*)
+        echo "修复 bazzite 系统安装后不展示扳手图标"
+        sudo -A chcon -R -t bin_t $HOME/homebrew/services/PluginLoader
         exit 0
         ;;
     *)
