@@ -9,6 +9,7 @@ echo "1) https://cdn.gh-proxy.org/（推荐）"
 echo "2) https://gh-proxy.org/"
 echo "3) https://v4.gh-proxy.org/"
 echo "4) https://v6.gh-proxy.org/"
+echo ""
 read -p "输入编号 (1-4): " cdn_choice
 case "$cdn_choice" in
 1) SELECTED_PROXY="https://cdn.gh-proxy.org/" ;;
@@ -18,16 +19,17 @@ case "$cdn_choice" in
 *) echo "无效选择，使用默认 https://cdn.gh-proxy.org/"; SELECTED_PROXY="https://cdn.gh-proxy.org/" ;;
 esac
 
-echo "请输入字母执行对应的操作："
+echo ""
 echo "s) 安装 decky-loader 稳定版"
 echo "p) 安装 decky-loader 预发布版"
 echo "u) 卸载 decky-loader"
 echo "b) 修复 bazzite 系统安装后不展示扳手图标"
+echo ""
 # Keep asking which release to install
 while true
 do
     # If $action is not set by $1, prompt the user
-    [ -z "$action" ] && read -p "安装 稳定版/预发布版/卸载 deck-loader (s/p/u): " action
+    [ -z "$action" ] && read -p "输入字母执行对应的操作 (s/p/u/b): " action
 
     case $(echo "${action}" | tr '[:lower:]' '[:upper:]') in
     S*)
