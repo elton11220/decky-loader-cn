@@ -22,6 +22,14 @@ graph TD
 
 ## 使用方式
 
+以下四条命令中选任意一条执行即可：
+
 ```bash
-curl -L https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install.sh | sh
+curl -L https://cdn.gh-proxy.org/https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install.sh | sh
+
+curl -L https://gh-proxy.org/https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install.sh | sh
+
+curl -L https://v4.gh-proxy.org/https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install.sh | sh
+
+curl -L https://v6.gh-proxy.org/https://github.com/elton11220/decky-loader-cn/blob/main/scripts/install.sh | sh
 ```
