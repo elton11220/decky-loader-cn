@@ -21,8 +21,8 @@ graph TD
     Users["👥 终端用户<br/>(中国大陆)"]
     
     Users -->|请求资源| GHProxy["🔗 gh-proxy<br/>(加速代理)"]
-    GHProxy -->|代理请求| Github["🌐 GitHub 源站"]
-    Github -->|返回资源| GHProxy
+    GHProxy --> Github["🌐 GitHub 源站"]
+    Github --> GHProxy
     GHProxy -->|返回资源| Users
     
     style Users fill:#e1f5ff
