@@ -4,6 +4,16 @@
 
 通过 `gh-proxy` 实现国内访问加速，修改自官方安装脚本，纯绿色无私货
 
+脚本有以下功能：
+
+- 安装 decky-loader 稳定版
+
+- 安装 decky-loader 预发布版
+
+- 卸载 decky-loader
+
+- 修复 bazzite 系统安装后不展示扳手图标
+
 ## 加速原理
 
 ```mermaid
