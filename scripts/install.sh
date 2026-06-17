@@ -10,7 +10,7 @@ echo "2) https://gh-proxy.org/"
 echo "3) https://v4.gh-proxy.org/"
 echo "4) https://v6.gh-proxy.org/"
 echo ""
-read -p "输入编号 (1-4): " cdn_choice
+printf "输入编号 (1-4): " && read cdn_choice < /dev/tty
 case "$cdn_choice" in
 1) SELECTED_PROXY="https://cdn.gh-proxy.org/" ;;
 2) SELECTED_PROXY="https://gh-proxy.org/" ;;
@@ -29,7 +29,7 @@ echo ""
 while true
 do
     # If $action is not set by $1, prompt the user
-    [ -z "$action" ] && read -p "输入字母执行对应的操作 (s/p/u/b): " action
+    [ -z "$action" ] && printf "输入字母执行对应的操作 (s/p/u/b): " && read action < /dev/tty
 
     case $(echo "${action}" | tr '[:lower:]' '[:upper:]') in
     S*)
